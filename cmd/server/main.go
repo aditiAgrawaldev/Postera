@@ -5,13 +5,14 @@ import (
 	"log"
 
 	"github.com/aditiAgrawaldev/postera/internal/channels"
+	"github.com/aditiAgrawaldev/postera/internal/models"
 	"github.com/aditiAgrawaldev/postera/internal/service"
 )
 
 func main() {
 	emailCh := channels.NewEmailChannel("localhost", "1025", "aditi@testing.com")
 	notificationService := service.NewNotificationService(emailCh)
-	recipients, err := notificationService.loadRecipient("email.csv")
+	recipients, err := notificationService.LoadRecipient("email.csv")
 	if err != nil {
 		log.Fatalf("Failed to load recipients: %v", err)
 	}
@@ -22,8 +23,8 @@ func main() {
 	for _, recipient := range recipients {
 		notifications = append(notifications, models.Notification{
 			Recipient: recipient,
-			Subject: "Test Notification",
-			Body: "This is a test notification",
+			Subject:   "Test Notification",
+			Body:      "This is a test notification",
 		})
 	}
 

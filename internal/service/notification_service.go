@@ -21,7 +21,7 @@ func NewNotificationService(channel channels.Channel) *NotificationService {
 }
 
 // Refactor karenge, same producer.go code
-func (n *NotificationService) loadRecipient(filePath string) ([]models.Recipient, error) {
+func (n *NotificationService) LoadRecipient(filePath string) ([]models.Recipient, error) {
 
 	file, err := os.Open(filePath)
 	if err != nil {
