@@ -7,6 +7,9 @@ import (
 )
 
 func loadRecipient(filePath string, ch chan Recipient) error {
+
+	defer close(ch)
+	
 	file, err := os.Open(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
