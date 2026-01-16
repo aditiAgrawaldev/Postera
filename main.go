@@ -10,7 +10,12 @@ type Recipient struct {
 func main() {
 	recipientChannel := make(chan Recipient)
 	go loadRecipient("email.csv", recipientChannel)
-	go consumer(1, recipientChannel)
+
+	consumerCount := 5
+
+	for i := 1; i <= consumerCount; i++ {
+		go consumer(i, recipientChannel)
+	}
 
 	time.Sleep(2 * time.Second)
 }
