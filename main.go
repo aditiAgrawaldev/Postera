@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 type Recipient struct {
 	Name  string
 	Email string
@@ -7,5 +9,8 @@ type Recipient struct {
 
 func main() {
 	recipientChannel := make(chan Recipient)
-	loadRecipient("email.csv", recipientChannel)
+	go loadRecipient("email.csv", recipientChannel)
+	go consumer(1, recipientChannel)
+
+	time.Sleep(2 * time.Second)
 }
