@@ -5,12 +5,17 @@ import (
 	"log"
 
 	"github.com/aditiAgrawaldev/postera/internal/channels"
+	"github.com/aditiAgrawaldev/postera/internal/config"
 	"github.com/aditiAgrawaldev/postera/internal/models"
 	"github.com/aditiAgrawaldev/postera/internal/service"
 )
 
 func main() {
-	emailCh := channels.NewEmailChannel("localhost", "1025", "aditi@testing.com")
+	config, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+	emailCh := channels.NewEmailChannel(config.SMTP.Host, config.SMTP.Port, config.SMTP.From)
 	notificationService := service.NewNotificationService(emailCh)
 	recipients, err := notificationService.LoadRecipient("email.csv")
 	if err != nil {
