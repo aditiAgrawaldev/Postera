@@ -5,6 +5,7 @@ import (
 	"net/smtp"
 
 	"github.com/aditiAgrawaldev/postera/internal/models"
+	"github.com/aditiAgrawaldev/postera/pkg/retry"
 )
 
 type EmailChannel struct {
@@ -24,6 +25,13 @@ func NewEmailChannel(smtpHost, smtpPort, from string) *EmailChannel {
 }
 
 func (e *EmailChannel) Send(notification models.Notification) error {
+	retryConfig := retry.DefaultConfig()
+	return retry.Retry(retryConfig, func() error {
+		return e.sendEmail(notification)
+	})
+}
+
+func (e *EmailChannel) sendEmail(notification models.Notification) error {
 
 	formattedMessage := fmt.Sprintf(
 		"To: %s\r\nSubject: %s\r\n\r\n%s\r\n",
