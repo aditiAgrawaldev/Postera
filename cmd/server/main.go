@@ -22,7 +22,7 @@ func main() {
 		log.Fatalf("Failed to load recipients: %v", err)
 	}
 
-	fmt.Println("Loaded recipients:", recipients)
+	fmt.Println("Loaded recipients")
 
 	var notifications []models.Notification
 	for _, recipient := range recipients {
@@ -33,7 +33,7 @@ func main() {
 		})
 	}
 
-	fmt.Println("Sending notifications:", notifications)
+	fmt.Println("Sending notifications")
 	notificationService.SendNotifications(notifications, 5)
 	fmt.Println("Notifications sent successfully")
 }
