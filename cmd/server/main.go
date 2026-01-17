@@ -16,8 +16,10 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 	emailCh := channels.NewEmailChannel(config.SMTP.Host, config.SMTP.Port, config.SMTP.From)
-	notificationService := service.NewNotificationService(emailCh)
-	recipients, err := notificationService.LoadRecipient("email.csv")
+	slackCh := channels.NewSlackChannel(config.Slack.WebhookURL)
+
+	notificationService := service.NewNotificationService(emailCh,slackCh)
+	recipients, err := notificationService.LoadRecipient("data.csv")
 	if err != nil {
 		log.Fatalf("Failed to load recipients: %v", err)
 	}

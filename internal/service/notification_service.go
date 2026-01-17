@@ -11,12 +11,14 @@ import (
 )
 
 type NotificationService struct {
-	channel channels.Channel
+	channels []channels.Channel
 }
 
-func NewNotificationService(channel channels.Channel) *NotificationService {
+//We will send to multiple channels
+
+func NewNotificationService(channelList ...channels.Channel) *NotificationService {
 	return &NotificationService{
-		channel: channel,
+		channels: channelList,
 	}
 }
 
@@ -51,9 +53,9 @@ func (n *NotificationService) SendNotifications(notifications []models.Notificat
 	notificationch := make(chan models.Notification)
 	var wg sync.WaitGroup
 
-	for i:=1; i<= consumerCount; i++ {
+	for i := 1; i <= consumerCount; i++ {
 		wg.Add(1)
-		go n.consumer(i,notificationch,&wg)
+		go n.consumer(i, notificationch, &wg)
 	}
 
 	for _, notification := range notifications {
@@ -71,11 +73,14 @@ func (n *NotificationService) consumer(id int, notificationch chan models.Notifi
 	for notification := range notificationch {
 		fmt.Printf("Worker %d sending notification to %s\n", id, notification.Recipient.Email)
 
-		err := n.channel.Send(notification)
-		if err != nil {
-			fmt.Printf("Worker %d failed to send notification to %s: %v\n", id, notification.Recipient.Email, err)
-		}else{
-			fmt.Printf("Worker %d sent notification to %s\n", id, notification.Recipient.Email)
+		for _, channel := range n.channels {
+
+			err := channel.Send(notification)
+			if err != nil {
+				fmt.Printf("Worker %d failed to send notification to %s: %v\n", id, notification.Recipient.Email, err)
+			} else {
+				fmt.Printf("Worker %d sent notification to %s\n", id, notification.Recipient.Email)
+			}
 		}
 	}
 }
