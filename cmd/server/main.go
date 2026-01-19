@@ -8,6 +8,7 @@ import (
 	"github.com/aditiAgrawaldev/postera/internal/config"
 	"github.com/aditiAgrawaldev/postera/internal/models"
 	"github.com/aditiAgrawaldev/postera/internal/service"
+	"github.com/aditiAgrawaldev/postera/pkg/template"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 	emailCh := channels.NewEmailChannel(config.SMTP.Host, config.SMTP.Port, config.SMTP.From)
 	slackCh := channels.NewSlackChannel(config.Slack.WebhookURL)
 
-	notificationService := service.NewNotificationService(emailCh,slackCh)
+	notificationService := service.NewNotificationService(emailCh, slackCh)
 	recipients, err := notificationService.LoadRecipient("data.csv")
 	if err != nil {
 		log.Fatalf("Failed to load recipients: %v", err)
@@ -28,10 +29,26 @@ func main() {
 
 	var notifications []models.Notification
 	for _, recipient := range recipients {
+
+		data := map[string]string{
+			"Name":  recipient.Name,
+			"Email": recipient.Email,
+		}
+
+		subject, err := template.LoadTemplate("templates/subject.txt", data)
+		if err != nil {
+			log.Fatalf("Failed to load subject template: %v", err)
+		}
+
+		body, err := template.LoadTemplate("templates/body.txt", data)
+		if err != nil {
+			log.Fatalf("Failed to load body template: %v", err)
+		}
+
 		notifications = append(notifications, models.Notification{
 			Recipient: recipient,
-			Subject:   "Test Notification",
-			Body:      "This is a test notification",
+			Subject:   subject,
+			Body:      body,
 		})
 	}
 

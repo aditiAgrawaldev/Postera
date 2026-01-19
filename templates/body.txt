@@ -1,0 +1,7 @@
+
+Hello {{Name}}
+
+You are getting this notification from Postera.
+
+Email: {{Email}}
+Thanks for using us!
