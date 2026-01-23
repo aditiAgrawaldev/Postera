@@ -25,11 +25,26 @@ type SlackConfig struct {
 }
 
 func LoadConfig() (*Config, error) {
+	smtpHost := os.Getenv("SMTP_HOST")
+	if smtpHost == "" {
+		smtpHost = "localhost"
+	}
+
+	smtpPort := os.Getenv("SMTP_PORT")
+	if smtpPort == "" {
+		smtpPort = "1025"
+	}
+
+	smtpFrom := os.Getenv("SMTP_FROM")
+	if smtpFrom == "" {
+		smtpFrom = "aditi@testing.com"
+	}
+
 	config := &Config{
 		SMTP: SMTPConfig{
-			Host: "localhost",
-			Port: "1025",
-			From: "aditi@testing.com",
+			Host: smtpHost,
+			Port: smtpPort,
+			From: smtpFrom,
 		},
 		App: AppConfig{
 			ConsumerCount: 5,

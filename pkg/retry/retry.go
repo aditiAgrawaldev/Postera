@@ -20,12 +20,14 @@ func DefaultConfig() Config {
 func Retry(config Config, opr func() error) error {
 
 	var lastErr error
-	
+
 	for i := 1; i <= config.MaxRetries; i++ {
 		err := opr()
 		if err == nil {
 			return nil
 		}
+
+		lastErr = err
 
 		if i == config.MaxRetries {
 			break

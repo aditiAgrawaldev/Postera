@@ -1,0 +1,17 @@
+services:
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  
+  postera:
+    build: .
+    environment:
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
+      - SMTP_FROM=aditi@testing.com
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+    depends_on:
+      - mailpit
+
